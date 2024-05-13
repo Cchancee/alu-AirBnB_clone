@@ -1,35 +1,31 @@
-# AirBnB clone Project 
+# AirBnB Clone Project Overview
 
-Project Description 
+Project Overview:
 
-Here, We'll be cloning the console part of the AirBnB clone Project.
+In this project, we will replicate the console functionality of the AirBnB Clone Project. 
 
-We'll be writing a command interpreter to manage our AirBnb objects.
+Our main objective is to develop a command interpreter to effectively manage our AirBnB objects.
 
-We'll need to 
-- put in place a parent class (called BaseModel) to take care of the 
-initialization, serialization and deserialization of your future instances 
-- create a simple flow of serialization/deserialization: Instance < - >
-Dictionary < - > json string < - > file
-- create all clases used for AirBnB(User,  State, City, Place...) that
-inherit from BaseModel
-- create the first abstracted storage engine of the project: File storage.
-- create all unittest to validate all our classes and storage engine.
+To accomplish this, we will:
 
-Our command interpreter would be able to:
+- Establish a parent class (BaseModel) responsible for initializing, serializing, and deserializing future instances.
 
+- Implement a streamlined process of serialization and deserialization: Instance <-> Dictionary <-> JSON string <-> File.
 
-    - Create a new object(ex: a new User or a new Place)
+- Define all classes essential for AirBnB functionality (such as User, State, City, Place...) inheriting from the BaseModel.
 
+- Create the foundational storage engine for the project: File Storage.
 
-    - Retrieve an object from a file, a database etc...
+- Develop comprehensive unit tests to validate the functionality of all classes and the storage engine.
 
+Key Features of our Command Interpreter:
 
-    - Do operations on objects(count, compute stats, etc...)
+- Ability to create new objects (e.g., a new User or a new Place).
 
+- Retrieve objects from various sources such as files or databases.
 
-    - Update attributes of an object
+- Perform operations on objects (e.g., counting, computing statistics).
 
+- Update attributes of existing objects.
 
-    - Destroy an object 
-
+- Delete objects from the system.
