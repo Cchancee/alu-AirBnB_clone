@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-This file defines the console class which will
+This file defines the CommandInterpreter class which will
 serve as the entry point of the entire project
 """
 
@@ -18,109 +18,103 @@ from models.review import Review
 
 
 # Global variable of registered models
-classes = storage.models
+registered_models = storage.models
 
 
-class HBNBCommand(Cmd):
+class CommandInterpreter(Cmd):
     """
-    The Console based driver of the AirBnb Clone
-    All interactions with the system is done via
-    this class"""
+    The Command Interpreter serves as the main interface for the AirBnb Clone
+    All interactions with the system are facilitated through this class"""
 
-    prompt = "(hbnb) "
+    prompt = "(airbnb) "
 
     """Commands"""
     def do_EOF(self, args):
-        """Exit the programme in non-interactive mode"""
+        """Exit the program in non-interactive mode"""
         return True
 
     def do_quit(self, args):
-        """Quit command exit the program"""
+        """Quit command to exit the program"""
         return True
 
     def do_create(self, args):
-        """Create an instance of Model given its name eg.
+        """Create an instance of a Model given its name, e.g.,
         $ create ModelName
-        Throws an Error if ModelName is missing or doesnt exist"""
+        Throws an Error if ModelName is missing or doesn't exist"""
         args, n = parse(args)
 
         if not n:
-            print("** class name missing **")
-        elif args[0] not in classes:
-            print("** class doesn't exist **")
+            print("** Model name missing **")
+        elif args[0] not in registered_models:
+            print("** Model doesn't exist **")
         elif n == 1:
-            # temp = classes[args[0]]()
             temp = eval(args[0])()
             print(temp.id)
             temp.save()
         else:
-            print("** Too many argument for create **")
-            pass
+            print("** Too many arguments for create **")
 
-    def do_show(self, arg):
-        """Show an Instance of Model base on its ModelName and id eg.
-        $ show MyModel instance_id
-        Print error message if either MyModel or instance_id is missing
-        Print an Error message for wrong MyModel or instance_id"""
+    def do_display(self, arg):
+        """Displays the specified instance of a Model based on its ModelName and id, e.g.,
+        $ display ModelName instance_id
+        Prints error message if either ModelName or instance_id is missing
+        Prints an Error message for a wrong ModelName or instance_id"""
         args, n = parse(arg)
 
         if not n:
-            print("** class name missing **")
+            print("** Model name missing **")
         elif n == 1:
             print("** instance id missing **")
         elif n == 2:
             try:
-                inst = storage.find_by_id(*args)
-                print(inst)
+                instance = storage.find_by_id(*args)
+                print(instance)
             except ModelNotFoundError:
-                print("** class doesn't exist **")
+                print("** Model doesn't exist **")
             except InstanceNotFoundError:
-                print("** no instance found **")
+                print("** No instance found **")
         else:
-            print("** Too many argument for show **")
-            pass
+            print("** Too many arguments for display **")
 
-    def do_destroy(self, arg):
-        """Deletes an Instance of Model base on its ModelName and id."""
+    def do_remove(self, arg):
+        """Deletes an instance of a Model based on its ModelName and id."""
         args, n = parse(arg)
 
         if not n:
-            print("** class name missing **")
+            print("** Model name missing **")
         elif n == 1:
             print("** instance id missing **")
         elif n == 2:
             try:
                 storage.delete_by_id(*args)
             except ModelNotFoundError:
-                print("** class doesn't exist **")
+                print("** Model doesn't exist **")
             except InstanceNotFoundError:
-                print("** no instance found **")
+                print("** No instance found **")
         else:
-            print("** Too many argument for destroy **")
-            pass
+            print("** Too many arguments for remove **")
 
-    def do_all(self, args):
-        """Usage: all or all <class> or <class>.all()
-        Display string representations of all instances of a given class.
-        If no class is specified, displays all instantiated objects."""
+    def do_list(self, args):
+        """Usage: list or list <ModelName> or <ModelName>.list()
+        Display string representations of all instances of a given model.
+        If no model is specified, displays all instantiated objects."""
         args, n = parse(args)
 
         if n < 2:
             try:
                 print(storage.find_all(*args))
             except ModelNotFoundError:
-                print("** class doesn't exist **")
+                print("** Model doesn't exist **")
         else:
-            print("** Too many argument for all **")
-            pass
+            print("** Too many arguments for list **")
 
-    def do_update(self, arg):
-        """Updates an instance base on its id eg
-        $ update Model id field value
+    def do_modify(self, arg):
+        """Updates an instance based on its id, e.g.,
+        $ modify Model id field value
         Throws errors for missing arguments"""
         args, n = parse(arg)
         if not n:
-            print("** class name missing **")
+            print("** Model name missing **")
         elif n == 1:
             print("** instance id missing **")
         elif n == 2:
@@ -131,20 +125,18 @@ class HBNBCommand(Cmd):
             try:
                 storage.update_one(*args[0:4])
             except ModelNotFoundError:
-                print("** class doesn't exist **")
+                print("** Model doesn't exist **")
             except InstanceNotFoundError:
-                print("** no instance found **")
+                print("** No instance found **")
 
-    def do_models(self, arg):
-        """Print all registered Models"""
-        print(*classes)
+    def do_registered_models(self, arg):
+        """Prints all registered Models"""
+        print(*registered_models)
 
-    def handle_class_methods(self, arg):
-        """Handle Class Methods
-        <cls>.all(), <cls>.show() etc
-        """
+    def handle_model_methods(self, arg):
+        """Handle Model Methods, e.g., <ModelName>.list(), <ModelName>.display() etc"""
 
-        printable = ("all(", "show(", "count(", "create(")
+        printable = ("list(", "display(", "count(", "create(")
         try:
             val = eval(arg)
             for x in printable:
@@ -153,24 +145,24 @@ class HBNBCommand(Cmd):
                     break
             return
         except AttributeError:
-            print("** invalid method **")
+            print("** Invalid method **")
         except InstanceNotFoundError:
-            print("** no instance found **")
+            print("** No instance found **")
         except TypeError as te:
             field = te.args[0].split()[-1].replace("_", " ")
             field = field.strip("'")
             print(f"** {field} missing **")
         except Exception as e:
-            print("** invalid syntax **")
+            print("** Invalid syntax **")
             pass
 
     def default(self, arg):
-        """Override default method to handle class methods"""
+        """Override default method to handle model methods"""
         if '.' in arg and arg[-1] == ')':
-            if arg.split('.')[0] not in classes:
-                print("** class doesn't exist **")
+            if arg.split('.')[0] not in registered_models:
+                print("** Model doesn't exist **")
                 return
-            return self.handle_class_methods(arg)
+            return self.handle_model_methods(arg)
         return Cmd.default(self, arg)
 
     def emptyline(self):
@@ -179,10 +171,10 @@ class HBNBCommand(Cmd):
 
 
 def parse(line: str):
-    """splits a line by spaces"""
+    """Splits a line by spaces"""
     args = shlex.split(line)
     return args, len(args)
 
 
 if __name__ == "__main__":
-    HBNBCommand().cmdloop()
+    CommandInterpreter().cmdloop()
